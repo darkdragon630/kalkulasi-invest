@@ -341,7 +341,17 @@
                 if (!a) { alert(`Jawab pertanyaan ${i}`); return; }
                 score += Number(a.value);
             }
-            score += Number(per) * .5;
+
+            // Skor jangka waktu
+            const periodScore = {
+                "1": 0,
+                "2": 0.5,
+                "3": 1,
+                "4": 1.5,
+                "5": 2
+            };
+            score += periodScore[per];
+
             let prof;
             if (score <= 6) prof = profiles.conservative;
             else if (score <= 10) prof = profiles.moderate;
