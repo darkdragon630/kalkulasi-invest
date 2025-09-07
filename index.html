@@ -114,12 +114,8 @@
                         <input id="fullName" placeholder="e.g. Andi Wijaya">
                     </div>
                     <div class="form-group">
-                        <label for="monthlyIncome">Gaji Bulanan (Rp)</label>
+                        <label for="monthlyIncome">Gaji/Uang Saku (Rp)</label>
                         <input id="monthlyIncome" placeholder="e.g. 500.000">
-                    </div>
-                    <div class="form-group">
-                        <label for="investmentAmount">Jumlah Investasi (Rp)</label>
-                        <input id="investmentAmount" placeholder="e.g. 100.000">
                     </div>
                     <div class="form-group">
                         <label for="investmentPeriod">Jangka Waktu</label>
@@ -261,10 +257,9 @@
         function calculateAllocation() {
             const name = document.getElementById('fullName').value.trim();
             const incomeEl = document.getElementById('monthlyIncome');
-            const amtEl = document.getElementById('investmentAmount');
             const per = document.getElementById('investmentPeriod').value;
-            if (!name || !incomeEl.value || !amtEl.value || !per) { alert('Lengkapi semua data'); return; }
-            const income = parse(incomeEl.value), amount = parse(amtEl.value);
+            if (!name || !incomeEl.value || !per) { alert('Lengkapi semua data'); return; }
+            const income = parse(incomeEl.value);
             let score = 0;
             for (let i = 1; i <= 4; i++) {
                 const a = document.querySelector(`input[name="q${i}"]:checked`);
@@ -276,10 +271,10 @@
             if (score <= 6) prof = profiles.conservative;
             else if (score <= 10) prof = profiles.moderate;
             else prof = profiles.aggressive;
-            showResult(prof, amount, name);
+            showResult(prof, income, name);
         }
 
-        function showResult(p, amt, name) {
+        function showResult(p, income, name) {
             let html = `
                 <div class="card">
                     <div class="risk-profile">
@@ -287,10 +282,10 @@
                         <span class="badge ${p.badge}">${p.icon} Profil ${p.name}</span>
                         <p>${p.desc}</p>
                     </div>
-                    <h3>Alokasi Aset</h3>
+                    <h3>Alokasi Aset dari Gaji/Uang Saku</h3>
                     <div class="grid allocation-grid">`;
             for (const [k, a] of Object.entries(p.allocation)) {
-                const alloc = amt * a.pct / 100;
+                const alloc = income * a.pct / 100;
                 html += `
                     <div class="asset-box">
                         <div class="icon">${a.icon}</div>
@@ -342,12 +337,10 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            ['monthlyIncome', 'investmentAmount'].forEach(id => {
-                const el = document.getElementById(id);
-                el.addEventListener('input', e => {
-                    let v = e.target.value.replace(/\D/g, '');
-                    if (v) e.target.value = Number(v).toLocaleString('id-ID');
-                });
+            const el = document.getElementById('monthlyIncome');
+            el.addEventListener('input', e => {
+                let v = e.target.value.replace(/\D/g, '');
+                if (v) e.target.value = Number(v).toLocaleString('id-ID');
             });
             document.querySelectorAll('.option-card').forEach(card => {
                 card.addEventListener('click', function () {
