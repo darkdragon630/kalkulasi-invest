@@ -122,10 +122,6 @@
                         <input id="investmentAmount" placeholder="e.g. 100.000">
                     </div>
                     <div class="form-group">
-                        <label for="monthlyExpense">Pengeluaran Bulanan (Rp)</label>
-                        <input id="monthlyExpense" placeholder="Digunakan untuk hitung dana darurat">
-                    </div>
-                    <div class="form-group">
                         <label for="investmentPeriod">Jangka Waktu</label>
                         <select id="investmentPeriod">
                             <option value="">Pilih</option>
@@ -266,10 +262,9 @@
             const name = document.getElementById('fullName').value.trim();
             const incomeEl = document.getElementById('monthlyIncome');
             const amtEl = document.getElementById('investmentAmount');
-            const expEl = document.getElementById('monthlyExpense');
             const per = document.getElementById('investmentPeriod').value;
-            if (!name || !incomeEl.value || !amtEl.value || !expEl.value || !per) { alert('Lengkapi semua data'); return; }
-            const income = parse(incomeEl.value), amount = parse(amtEl.value), expense = parse(expEl.value);
+            if (!name || !incomeEl.value || !amtEl.value || !per) { alert('Lengkapi semua data'); return; }
+            const income = parse(incomeEl.value), amount = parse(amtEl.value);
             let score = 0;
             for (let i = 1; i <= 4; i++) {
                 const a = document.querySelector(`input[name="q${i}"]:checked`);
@@ -281,11 +276,10 @@
             if (score <= 6) prof = profiles.conservative;
             else if (score <= 10) prof = profiles.moderate;
             else prof = profiles.aggressive;
-            showResult(prof, amount, expense, name);
+            showResult(prof, amount, name);
         }
 
-        function showResult(p, amt, exp, name) {
-            const needEmerg = exp * 3;
+        function showResult(p, amt, name) {
             let html = `
                 <div class="card">
                     <div class="risk-profile">
@@ -306,16 +300,16 @@
                         <div style="font-weight:700">${idr(alloc)}</div>
                     </div>`;
             }
-            html += `</div>`;
-            const emergReal = amt * p.allocation.emergency.pct / 100;
-            if (emergReal < needEmerg) html += `<p style="color:var(--clr-danger)"><br>⚠️ Dana darurat Anda (${idr(emergReal)}) kurang dari 3× pengeluaran (${idr(needEmerg)}).</p>`;
-            html += `<button class="btn" onclick="downloadPDF()">📥 Unduh PDF</button></div>`;
+            html += `</div><button class="btn" onclick="downloadPDF()">📥 Unduh PDF</button></div>`;
             document.getElementById('result').innerHTML = html;
             document.getElementById('result').style.display = 'block';
             document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
         }
 
         async function downloadPDF() {
+            const btn = document.querySelector('#result .btn');
+            btn.style.display = 'none'; // sembunyikan tombol saat jadi PDF
+
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
             const res = document.getElementById('result');
@@ -336,6 +330,8 @@
             }
             const name = document.getElementById('fullName').value.trim() || 'Investor';
             pdf.save(`Alokasi-Investasi-${name}.pdf`);
+
+            btn.style.display = 'inline-flex'; // tampilkan lagi tombol
         }
 
         function toggleTheme() {
@@ -346,7 +342,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            ['monthlyIncome', 'investmentAmount', 'monthlyExpense'].forEach(id => {
+            ['monthlyIncome', 'investmentAmount'].forEach(id => {
                 const el = document.getElementById(id);
                 el.addEventListener('input', e => {
                     let v = e.target.value.replace(/\D/g, '');
