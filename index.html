@@ -115,11 +115,11 @@
                     </div>
                     <div class="form-group">
                         <label for="monthlyIncome">Gaji Bulanan (Rp)</label>
-                        <input id="monthlyIncome" placeholder="e.g. 15.000.000">
+                        <input id="monthlyIncome" placeholder="e.g. 500.000">
                     </div>
                     <div class="form-group">
                         <label for="investmentAmount">Jumlah Investasi (Rp)</label>
-                        <input id="investmentAmount" placeholder="e.g. 50.000.000">
+                        <input id="investmentAmount" placeholder="e.g. 100.000">
                     </div>
                     <div class="form-group">
                         <label for="monthlyExpense">Pengeluaran Bulanan (Rp)</label>
@@ -270,7 +270,6 @@
             const per = document.getElementById('investmentPeriod').value;
             if (!name || !incomeEl.value || !amtEl.value || !expEl.value || !per) { alert('Lengkapi semua data'); return; }
             const income = parse(incomeEl.value), amount = parse(amtEl.value), expense = parse(expEl.value);
-            if (income < 1e6 || amount < 1e6) { alert('Minimal gaji & investasi Rp 1 juta'); return; }
             let score = 0;
             for (let i = 1; i <= 4; i++) {
                 const a = document.querySelector(`input[name="q${i}"]:checked`);
