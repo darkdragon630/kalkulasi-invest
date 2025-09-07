@@ -114,6 +114,10 @@
                         <input id="fullName" placeholder="e.g. Andi Wijaya">
                     </div>
                     <div class="form-group">
+                        <label for="monthlyIncome">Gaji Bulanan (Rp)</label>
+                        <input id="monthlyIncome" placeholder="e.g. 15.000.000">
+                    </div>
+                    <div class="form-group">
                         <label for="investmentAmount">Jumlah Investasi (Rp)</label>
                         <input id="investmentAmount" placeholder="e.g. 50.000.000">
                     </div>
@@ -182,7 +186,7 @@
         <div class="container grid footer__grid">
             <div>
                 <h4>SAZEN Corp</h4>
-                <p>Wealth-Tech Advisory berizin OJK untuk membantu Anda berinvestasi lebih cerdas.</p>
+                <p>Wealth-Tech Advisory untuk membantu Anda berinvestasi lebih cerdas.</p>
                 <div class="socials">
                     <a href="#" aria-label="LinkedIn">in</a>
                     <a href="#" aria-label="Twitter">X</a>
@@ -260,12 +264,13 @@
 
         function calculateAllocation() {
             const name = document.getElementById('fullName').value.trim();
+            const incomeEl = document.getElementById('monthlyIncome');
             const amtEl = document.getElementById('investmentAmount');
             const expEl = document.getElementById('monthlyExpense');
             const per = document.getElementById('investmentPeriod').value;
-            if (!name || !amtEl.value || !expEl.value || !per) { alert('Lengkapi semua data'); return; }
-            const amount = parse(amtEl.value), expense = parse(expEl.value);
-            if (amount < 1e6) { alert('Minimal Rp 1 juta'); return; }
+            if (!name || !incomeEl.value || !amtEl.value || !expEl.value || !per) { alert('Lengkapi semua data'); return; }
+            const income = parse(incomeEl.value), amount = parse(amtEl.value), expense = parse(expEl.value);
+            if (income < 1e6 || amount < 1e6) { alert('Minimal gaji & investasi Rp 1 juta'); return; }
             let score = 0;
             for (let i = 1; i <= 4; i++) {
                 const a = document.querySelector(`input[name="q${i}"]:checked`);
@@ -342,7 +347,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            ['investmentAmount', 'monthlyExpense'].forEach(id => {
+            ['monthlyIncome', 'investmentAmount', 'monthlyExpense'].forEach(id => {
                 const el = document.getElementById(id);
                 el.addEventListener('input', e => {
                     let v = e.target.value.replace(/\D/g, '');
